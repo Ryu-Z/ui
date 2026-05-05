@@ -52,6 +52,7 @@ Router.map(function() {
 
     this.route('apikeys');
     this.route('prefs');
+    this.route('terminal-audit');
 
     // Per-Cluster
     this.route('cluster', { path: '/c/:cluster_id' }, function() {

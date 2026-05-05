@@ -1,0 +1,139 @@
+<section class="header clearfix">
+  <div class="right-buttons">
+    <button class="btn btn-sm bg-default" type="button" disabled={{loadingCommands}} {{action "searchCommands"}}>
+      <i class="icon icon-refresh icon-fw"></i>
+      {{t "terminalAuditPage.actions.refresh"}}
+    </button>
+  </div>
+
+  <h1>{{t "terminalAuditPage.header"}}</h1>
+</section>
+
+<section class="row">
+  <div class="col span-4">
+    <label>{{t "terminalAuditPage.status.enabled"}}</label>
+    <div class="text-bold">
+      {{#if status.enabled}}{{t "generic.enabled"}}{{else}}{{t "generic.disabled"}}{{/if}}
+    </div>
+  </div>
+  <div class="col span-4">
+    <label>{{t "terminalAuditPage.status.commandStorage"}}</label>
+    <div class="text-bold">{{status.commandStorageType}}</div>
+  </div>
+  <div class="col span-4">
+    <label>{{t "terminalAuditPage.status.replayStorage"}}</label>
+    <div class="text-bold">{{status.replayStorageType}}</div>
+  </div>
+</section>
+
+<section>
+  <div class="row">
+    <div class="col span-3">
+      <label>{{t "terminalAuditPage.filters.session"}}</label>
+      {{input value=sessionId class="form-control" placeholder=(t "terminalAuditPage.filters.session")}}
+    </div>
+    <div class="col span-2">
+      <label>{{t "terminalAuditPage.filters.user"}}</label>
+      {{input value=user class="form-control" placeholder=(t "terminalAuditPage.filters.user")}}
+    </div>
+    <div class="col span-2">
+      <label>{{t "terminalAuditPage.filters.asset"}}</label>
+      {{input value=asset class="form-control" placeholder=(t "terminalAuditPage.filters.asset")}}
+    </div>
+    <div class="col span-2">
+      <label>{{t "terminalAuditPage.filters.account"}}</label>
+      {{input value=account class="form-control" placeholder=(t "terminalAuditPage.filters.account")}}
+    </div>
+    <div class="col span-2">
+      <label>{{t "terminalAuditPage.filters.input"}}</label>
+      {{input value=input class="form-control" placeholder=(t "terminalAuditPage.filters.input")}}
+    </div>
+    <div class="col span-1">
+      <label>{{t "generic.limit"}}</label>
+      {{input value=limit class="form-control" type="number" min="1" max="1000"}}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <button class="btn btn-sm bg-primary" type="button" disabled={{loadingCommands}} {{action "searchCommands"}}>
+      <i class="icon icon-search icon-fw"></i>
+      {{t "generic.search"}}
+    </button>
+    <button class="btn btn-sm bg-default ml-10" type="button" disabled={{loadingCommands}} {{action "clearCommandFilters"}}>
+      {{t "terminalAuditPage.actions.clear"}}
+    </button>
+  </div>
+</section>
+
+<section>
+  <div class="clearfix mb-10">
+    <h3 class="pull-left">{{t "terminalAuditPage.commands.title" count=commandCount}}</h3>
+  </div>
+
+  <table class="grid fixed bordered">
+    <thead>
+      <tr>
+        <th>{{t "terminalAuditPage.table.time"}}</th>
+        <th>{{t "terminalAuditPage.table.user"}}</th>
+        <th>{{t "terminalAuditPage.table.asset"}}</th>
+        <th>{{t "terminalAuditPage.table.account"}}</th>
+        <th>{{t "terminalAuditPage.table.session"}}</th>
+        <th>{{t "terminalAuditPage.table.command"}}</th>
+        <th>{{t "terminalAuditPage.table.risk"}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each commandRows as |row|}}
+        <tr>
+          <td>{{row.timestampDisplay}}</td>
+          <td>{{row.user}}</td>
+          <td>{{row.asset}}</td>
+          <td>{{row.account}}</td>
+          <td><code>{{row.session}}</code></td>
+          <td><code>{{row.input}}</code></td>
+          <td>{{row.riskLevel}}</td>
+        </tr>
+      {{else}}
+        <tr>
+          <td colspan="7" class="text-center text-muted pt-20 pb-20">{{t "terminalAuditPage.table.noData"}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h3>{{t "terminalAuditPage.replays.title"}}</h3>
+  <div class="row">
+    <div class="col span-3">
+      <label>{{t "terminalAuditPage.replays.date"}}</label>
+      {{input value=replayDate class="form-control" placeholder="YYYY-MM-DD"}}
+    </div>
+    <div class="col span-4">
+      <label>{{t "terminalAuditPage.replays.session"}}</label>
+      {{input value=replaySession class="form-control" placeholder=(t "terminalAuditPage.replays.session")}}
+    </div>
+    <div class="col span-4">
+      <label>{{t "terminalAuditPage.replays.filename"}}</label>
+      {{input value=replayFilename class="form-control" placeholder="session.cast.gz"}}
+    </div>
+    <div class="col span-1">
+      <label>&nbsp;</label>
+      <button class="btn btn-sm bg-primary" type="button" disabled={{loadingReplay}} {{action "loadReplayUrl"}}>
+        <i class="icon icon-external-link icon-fw"></i>
+      </button>
+    </div>
+  </div>
+
+  {{#if replayUrl}}
+    <div class="mt-10">
+      <label>{{t "terminalAuditPage.replays.objectKey"}}</label>
+      <code class="p-10 mb-10 block">{{replayKey}}</code>
+      <a class="btn btn-sm bg-default" href="{{replayUrl}}" target="_blank" rel="nofollow noreferrer">
+        <i class="icon icon-download icon-fw"></i>
+        {{t "terminalAuditPage.replays.open"}}
+      </a>
+      {{copy-to-clipboard clipboardText=replayUrl size="sm"}}
+    </div>
+  {{/if}}
+</section>

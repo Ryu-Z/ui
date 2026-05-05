@@ -10211,6 +10211,7 @@ nav:
     fleet: Continuous Delivery
     gatekeeper: OPA Gatekeeper
     rio: Rio
+    terminalAudit: Terminal Audit
   project:
     none: Grouped Projects/Namespaces
     namespaces: Namespaces
@@ -10888,3 +10889,37 @@ selectValueCheck:
       =1 {Please select a new value. The following is no longer valid:}
       other {Please select new values. The following are no longer valid:}
     }
+
+terminalAuditPage:
+  header: Terminal Audit
+  actions:
+    refresh: Refresh
+    clear: Clear
+  status:
+    enabled: Enabled
+    commandStorage: Command Storage
+    replayStorage: Replay Storage
+  filters:
+    session: Session
+    user: User
+    asset: Asset
+    account: Account
+    input: Command
+  commands:
+    title: "Command Records ({count})"
+  table:
+    time: Time
+    user: User
+    asset: Asset
+    account: Account
+    session: Session
+    command: Command
+    risk: Risk
+    noData: No command records found.
+  replays:
+    title: Replay
+    date: Date
+    session: Session
+    filename: File Name
+    objectKey: Object Key
+    open: Open Replay

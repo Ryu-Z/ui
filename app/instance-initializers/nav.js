@@ -441,6 +441,13 @@ const rootNav = [
         resource:       ['clustertemplate'],
         resourceScope:  'global',
       },
+      {
+        id:             'terminal-audit',
+        localizedLabel: 'nav.tools.terminalAudit',
+        route:          'authenticated.terminal-audit',
+        resource:       [],
+        resourceScope:  'global',
+      },
       { divider: true },
       {
         id:                'tools-fleet',

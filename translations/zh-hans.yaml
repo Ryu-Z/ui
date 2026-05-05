@@ -9970,6 +9970,7 @@ nav:
     fleet: 持续交付
     gatekeeper: OPA Gatekeeper
     rio: Rio
+    terminalAudit: 终端审计
   project:
     none: '项目/命名空间'
     namespaces: 命名空间
@@ -10705,3 +10706,37 @@ selectValueCheck:
       =1 { 请选择新的值。以下内容不再有效:}
       other { 请选择新的值。以下内容不再有效:}
     }
+
+terminalAuditPage:
+  header: 终端审计
+  actions:
+    refresh: 刷新
+    clear: 清空
+  status:
+    enabled: 启用状态
+    commandStorage: 命令存储
+    replayStorage: 录像存储
+  filters:
+    session: 会话
+    user: 用户
+    asset: 资产
+    account: 账号
+    input: 命令
+  commands:
+    title: "命令记录（{count}）"
+  table:
+    time: 时间
+    user: 用户
+    asset: 资产
+    account: 账号
+    session: 会话
+    command: 命令
+    risk: 风险
+    noData: 未找到命令记录
+  replays:
+    title: 录像
+    date: 日期
+    session: 会话
+    filename: 文件名
+    objectKey: 对象 Key
+    open: 打开录像
