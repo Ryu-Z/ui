@@ -57,7 +57,7 @@ async function refreshStatus() {
     status.commandStorageType = body.commandStorageType || '-';
     status.replayStorageType = body.replayStorageType || '-';
   } catch (err) {
-    errorMessage.value = `Failed to load terminal audit status: ${err.message}`;
+    errorMessage.value = `Failed to load terminal status: ${err.message}`;
   } finally {
     loadingStatus.value = false;
   }
@@ -73,7 +73,7 @@ async function searchCommands() {
     commands.value = body.data || [];
     commandCount.value = body.count || 0;
   } catch (err) {
-    errorMessage.value = `Failed to load command audit records: ${err.message}`;
+    errorMessage.value = `Failed to load command records: ${err.message}`;
   } finally {
     loadingCommands.value = false;
   }
@@ -155,7 +155,7 @@ onMounted(refreshAll);
             <a class="nav-link" href="#" @click="mobileNavOpen = false">{{ item }}</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#" @click="mobileNavOpen = false">Terminal Audit</a>
+            <a class="nav-link" href="#" @click="mobileNavOpen = false">Terminal</a>
           </li>
         </ul>
         <ul class="nav-user list-unstyled">
@@ -182,7 +182,7 @@ onMounted(refreshAll);
           </button>
         </div>
 
-        <h1>Terminal Audit</h1>
+        <h1>Terminal</h1>
       </section>
 
       <section v-if="errorMessage" class="banner bg-error mb-10">
