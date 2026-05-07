@@ -2,7 +2,101 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import { loadCommands, loadReplayUrl, loadStatus } from './api/terminalAudit';
 
-const navItems = ['Global', 'Clusters', 'Apps', 'Security', 'Tools'];
+const navItems = [
+  {
+    id: 'global',
+    label: 'Global',
+    href: '/g',
+    columns: [
+      {
+        title: 'Scope',
+        links: [
+          { label: 'Global', href: '/g' },
+          { label: 'Clusters', href: '/g/clusters' },
+          { label: 'Apps', href: '/g/apps' },
+        ],
+      },
+      {
+        title: 'Clusters',
+        links: [
+          { label: 'All Clusters', href: '/g/clusters' },
+          { label: 'Add Cluster', href: '/g/clusters/add' },
+        ],
+        emptyText: "You don't have any clusters",
+      },
+      {
+        title: 'Projects',
+        links: [
+          { label: 'Projects/Namespaces', href: '/c/local/projects-namespaces' },
+        ],
+        emptyText: 'Select a cluster',
+      },
+    ],
+  },
+  {
+    id: 'clusters',
+    label: 'Clusters',
+    href: '/g/clusters',
+    menu: [
+      { label: 'Clusters', href: '/g/clusters' },
+      { label: 'Add Cluster', href: '/g/clusters/add' },
+      { label: 'Cluster Templates', href: '/g/rke-templates' },
+      { label: 'Node Drivers', href: '/n/drivers/node' },
+      { label: 'Cluster Drivers', href: '/n/drivers/cluster' },
+    ],
+  },
+  {
+    id: 'apps',
+    label: 'Apps',
+    href: '/g/apps',
+    menu: [
+      { label: 'Apps', href: '/g/apps' },
+      { label: 'Launch', href: '/g/apps/catalog' },
+      { label: 'Manage Catalogs', href: '/g/catalog' },
+    ],
+  },
+  {
+    id: 'security',
+    label: 'Security',
+    href: '/g/security',
+    menu: [
+      { label: 'Users', href: '/g/security/accounts/users' },
+      { label: 'Groups', href: '/g/security/accounts/groups' },
+      { label: 'Roles', href: '/g/security/roles' },
+      { label: 'Pod Security Policies', href: '/g/security/policies' },
+      { label: 'Authentication', href: '/g/security/authentication' },
+    ],
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    href: '/g/catalog',
+    menu: [
+      { label: 'Catalogs', href: '/g/catalog' },
+      { label: 'Drivers', href: '/n/drivers' },
+      { label: 'Global DNS Entries', href: '/g/dns/entries' },
+      { label: 'Global DNS Providers', href: '/g/dns/providers' },
+      { label: 'RKE Templates', href: '/g/rke-templates' },
+      { label: 'Terminal', href: '/terminal-audit' },
+      { divider: true },
+      { label: 'Continuous Delivery', href: '/dashboard/c/local/fleet' },
+    ],
+  },
+  {
+    id: 'terminal',
+    label: 'Terminal',
+    href: '/terminal-audit',
+    active: true,
+  },
+];
+const userMenuItems = [
+  { label: 'API & Keys', href: '/apikeys' },
+  { label: 'Cloud Credentials', href: '/g/security/cloud-credentials' },
+  { label: 'Node Templates', href: '/n/node-templates' },
+  { label: 'Preferences', href: '/prefs' },
+  { divider: true },
+  { label: 'Log Out', href: '/logout' },
+];
 const status = reactive({
   enabled: false,
   commandStorageType: '-',
@@ -31,6 +125,9 @@ const loadingReplay = ref(false);
 const errorMessage = ref('');
 const copied = ref(false);
 const mobileNavOpen = ref(false);
+const navOverviewOpen = ref(false);
+const openNavMenu = ref('');
+const userMenuOpen = ref(false);
 
 const commandRows = computed(() => commands.value.map((row) => {
   const timestamp = row.timestamp;
@@ -46,6 +143,45 @@ const commandRows = computed(() => commands.value.map((row) => {
     timestampDisplay,
   };
 }));
+const overviewSections = computed(() => navItems.map((item) => ({
+  ...item,
+  links: (item.menu || item.columns?.flatMap((column) => column.links) || [{ label: item.label, href: item.href }])
+    .filter((link) => !link.divider),
+})));
+
+function hasNavMenu(item) {
+  return Boolean(item.menu || item.columns);
+}
+
+function closeMenus() {
+  openNavMenu.value = '';
+  userMenuOpen.value = false;
+}
+
+function toggleNavigation() {
+  mobileNavOpen.value = !mobileNavOpen.value;
+  navOverviewOpen.value = mobileNavOpen.value;
+  closeMenus();
+}
+
+function toggleNavMenu(item) {
+  if (!hasNavMenu(item)) {
+    closeMenus();
+    navOverviewOpen.value = false;
+    mobileNavOpen.value = false;
+    return;
+  }
+
+  userMenuOpen.value = false;
+  navOverviewOpen.value = false;
+  openNavMenu.value = openNavMenu.value === item.id ? '' : item.id;
+}
+
+function toggleUserMenu() {
+  userMenuOpen.value = !userMenuOpen.value;
+  openNavMenu.value = '';
+  navOverviewOpen.value = false;
+}
 
 async function refreshStatus() {
   loadingStatus.value = true;
@@ -146,21 +282,80 @@ onMounted(refreshAll);
           aria-controls="primary-nav"
           aria-label="Toggle navigation"
           :aria-expanded="mobileNavOpen.toString()"
-          @click="mobileNavOpen = !mobileNavOpen"
+          @click="toggleNavigation"
         >
           <i class="icon" :class="mobileNavOpen ? 'icon-close' : 'icon-hamburger-nav'"></i>
         </button>
         <ul id="primary-nav" class="nav-main nav-list no-inline-space" :class="{ 'is-open': mobileNavOpen }">
-          <li v-for="item in navItems" :key="item" class="nav-item">
-            <a class="nav-link" href="#" @click="mobileNavOpen = false">{{ item }}</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="#" @click="mobileNavOpen = false">Terminal</a>
+          <li
+            v-for="item in navItems"
+            :key="item.id"
+            class="nav-item"
+            :class="{ active: item.active, open: openNavMenu === item.id, 'has-menu': hasNavMenu(item) }"
+          >
+            <button
+              v-if="hasNavMenu(item)"
+              class="nav-link nav-menu-button"
+              type="button"
+              aria-haspopup="true"
+              :aria-expanded="(openNavMenu === item.id).toString()"
+              @click="toggleNavMenu(item)"
+            >
+              {{ item.label }}
+              <i class="icon icon-chevron-down text-muted"></i>
+            </button>
+            <a
+              v-else
+              class="nav-link"
+              :href="item.href"
+              @click="closeMenus"
+            >
+              {{ item.label }}
+            </a>
+
+            <div v-if="item.columns && openNavMenu === item.id" class="nav-dropdown nav-project-menu" role="menu">
+              <div v-for="column in item.columns" :key="column.title" class="nav-dropdown-column">
+                <div class="nav-dropdown-title">{{ column.title }}</div>
+                <a
+                  v-for="link in column.links"
+                  :key="link.href"
+                  class="nav-dropdown-link"
+                  :href="link.href"
+                  role="menuitem"
+                  @click="closeMenus"
+                >
+                  {{ link.label }}
+                </a>
+                <div v-if="column.emptyText" class="nav-dropdown-empty">{{ column.emptyText }}</div>
+              </div>
+            </div>
+
+            <ul v-if="item.menu && openNavMenu === item.id" class="nav-dropdown nav-dropdown-list" role="menu">
+              <li v-for="(link, index) in item.menu" :key="link.href || `divider-${index}`">
+                <div v-if="link.divider" class="nav-divider"></div>
+                <a
+                  v-else
+                  class="nav-dropdown-link"
+                  :href="link.href"
+                  role="menuitem"
+                  @click="closeMenus"
+                >
+                  {{ link.label }}
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
-        <ul class="nav-user list-unstyled">
+        <ul class="nav-user list-unstyled" :class="{ open: userMenuOpen }">
           <li class="nav-item">
-            <a role="button" aria-haspopup="true" class="nav-link">
+            <a
+              role="button"
+              aria-haspopup="true"
+              class="nav-link"
+              href="#"
+              :aria-expanded="userMenuOpen.toString()"
+              @click.prevent="toggleUserMenu"
+            >
               <div class="gh-avatar">
                 <div class="gh-placeholder">
                   <i class="icon icon-user"></i>
@@ -168,8 +363,45 @@ onMounted(refreshAll);
               </div>
               <i class="icon icon-chevron-down text-muted"></i>
             </a>
+            <ul v-if="userMenuOpen" class="nav-dropdown nav-dropdown-list user-menu" role="menu">
+              <li class="user-menu-header">
+                <div class="gh-avatar">
+                  <div class="gh-placeholder">
+                    <i class="icon icon-user"></i>
+                  </div>
+                </div>
+                <span>Local User</span>
+              </li>
+              <li v-for="(item, index) in userMenuItems" :key="item.href || `user-divider-${index}`">
+                <div v-if="item.divider" class="nav-divider"></div>
+                <a
+                  v-else
+                  class="nav-dropdown-link"
+                  :href="item.href"
+                  role="menuitem"
+                  @click="closeMenus"
+                >
+                  {{ item.label }}
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
+        <div v-if="navOverviewOpen" class="nav-overview" role="menu">
+          <section v-for="section in overviewSections" :key="section.id" class="nav-overview-section">
+            <div class="nav-dropdown-title">{{ section.label }}</div>
+            <a
+              v-for="link in section.links"
+              :key="`${section.id}-${link.href || link.label}`"
+              class="nav-dropdown-link"
+              :href="link.href"
+              role="menuitem"
+              @click="closeMenus"
+            >
+              {{ link.label }}
+            </a>
+          </section>
+        </div>
       </nav>
     </header>
 

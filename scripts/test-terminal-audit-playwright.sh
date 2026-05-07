@@ -443,6 +443,11 @@ main() {
   wait_for_text "Command Records (2)" "Initial command list did not render"
   assert_eval "document.body.innerText.includes('Enabled') && document.body.innerText.includes('s3') && document.body.innerText.includes('kubectl get pods -A')" "初始状态和命令列表渲染成功"
   assert_eval "Math.abs(document.querySelector('.page-header nav').getBoundingClientRect().left - document.querySelector('main').getBoundingClientRect().left) < 1" "主内容与导航栏左侧对齐"
+  run_logged "打开 Tools 导航菜单" click 'button.nav-menu-button:has-text("Tools")'
+  assert_eval "document.querySelector('.nav-dropdown')?.innerText.includes('Catalogs') && document.querySelector('.nav-dropdown')?.innerText.includes('Terminal')" "Tools 二级菜单可点击展开"
+  run_logged "打开用户菜单" click '.nav-user .nav-link'
+  assert_eval "document.querySelector('.user-menu')?.innerText.includes('API & Keys') && document.querySelector('.user-menu')?.innerText.includes('Preferences')" "用户菜单可点击展开"
+  run_logged "关闭用户菜单" click '.nav-user .nav-link'
   capture_step "01-initial-load" "初始加载" "验证 status 与 commands 默认列表 mock。"
 
   start_step_log "02-mobile-nav"
@@ -450,7 +455,7 @@ main() {
   assert_eval "document.documentElement.scrollWidth <= window.innerWidth + 1" "窄屏页面没有横向溢出"
   assert_eval "getComputedStyle(document.querySelector('.nav-toggle')).display !== 'none' && getComputedStyle(document.querySelector('.nav-main')).display === 'none' && document.querySelector('.page-header nav').getBoundingClientRect().height <= 60" "窄屏导航默认折叠为紧凑顶栏"
   run_logged "展开窄屏导航" click '.nav-toggle'
-  assert_eval "getComputedStyle(document.querySelector('.nav-main')).display !== 'none' && document.querySelector('.page-header nav').getBoundingClientRect().height < 340" "窄屏导航点击后展开且高度受控"
+  assert_eval "getComputedStyle(document.querySelector('.nav-main')).display !== 'none' && document.querySelector('.nav-overview')?.innerText.includes('Global DNS Entries') && document.querySelector('.page-header nav').getBoundingClientRect().height < 760" "窄屏导航点击后展开全量菜单且高度受控"
   capture_step "02-mobile-nav" "窄屏导航" "验证 534px 视口下导航默认折叠，展开后菜单高度受控且页面没有横向溢出。"
   run_logged "收起窄屏导航" click '.nav-toggle'
   run_logged "恢复桌面视口" resize 1440 1100
