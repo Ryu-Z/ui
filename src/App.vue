@@ -181,8 +181,6 @@ onMounted(refreshAll);
             Refresh
           </button>
         </div>
-
-        <h1>Terminal</h1>
       </section>
 
       <section v-if="errorMessage" class="banner bg-error mb-10">
