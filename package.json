@@ -5,6 +5,7 @@
   "repository": "https://github.com/rancher/ui",
   "license": "Apache-2.0",
   "author": "Rancher Labs, Inc.",
+  "type": "module",
   "engines": {
     "node": ">=18"
   },
@@ -13,7 +14,9 @@
     "build-static": "vite build --base ./ && node ./scripts/copy-vue-assets.mjs",
     "dev": "vite --host 0.0.0.0",
     "start": "vite --host 0.0.0.0",
-    "test": "vite build",
+    "test": "yarn test:unit && yarn test:browser && yarn build",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:browser": "bash ./scripts/test-terminal-audit-playwright.sh",
     "lint:js": "eslint --max-warnings 0 src",
     "lint:fix": "eslint --max-warnings 0 --fix src"
   },

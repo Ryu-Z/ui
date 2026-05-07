@@ -1,3 +1,17 @@
+function responseErrorMessage(response, body) {
+  if (body && !body.nonJson && typeof body === 'object') {
+    if (body.message) {
+      return body.message;
+    }
+
+    if (body.error) {
+      return body.error;
+    }
+  }
+
+  return `Request failed with status ${response.status}${response.statusText ? ` ${response.statusText}` : ''}`;
+}
+
 async function readJson(response) {
   const text = await response.text();
 
@@ -5,10 +19,16 @@ async function readJson(response) {
     return {};
   }
 
+  const contentType = response.headers.get('content-type') || '';
+
+  if (!contentType.includes('json')) {
+    return { nonJson: true };
+  }
+
   try {
     return JSON.parse(text);
   } catch {
-    return { message: text };
+    return { nonJson: true };
   }
 }
 
@@ -22,7 +42,7 @@ async function request(path) {
   const body = await readJson(response);
 
   if (!response.ok) {
-    throw new Error(body.message || body.error || response.statusText);
+    throw new Error(responseErrorMessage(response, body));
   }
 
   return body;
