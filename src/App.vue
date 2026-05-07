@@ -30,6 +30,7 @@ const loadingStatus = ref(false);
 const loadingReplay = ref(false);
 const errorMessage = ref('');
 const copied = ref(false);
+const mobileNavOpen = ref(false);
 
 const commandRows = computed(() => commands.value.map((row) => {
   const timestamp = row.timestamp;
@@ -138,13 +139,23 @@ onMounted(refreshAll);
   <div id="application-shell">
     <header class="page-header">
       <nav class="clearfix responsive-nav" role="navigation">
-        <a class="nav-logo logo-oss btn bg-transparent" href="/" aria-label="Rancher"></a>
-        <ul class="nav-main nav-list no-inline-space">
+        <a class="nav-logo logo-oss" href="/" aria-label="Rancher"></a>
+        <button
+          class="nav-toggle btn bg-transparent"
+          type="button"
+          aria-controls="primary-nav"
+          aria-label="Toggle navigation"
+          :aria-expanded="mobileNavOpen.toString()"
+          @click="mobileNavOpen = !mobileNavOpen"
+        >
+          <i class="icon" :class="mobileNavOpen ? 'icon-close' : 'icon-hamburger-nav'"></i>
+        </button>
+        <ul id="primary-nav" class="nav-main nav-list no-inline-space" :class="{ 'is-open': mobileNavOpen }">
           <li v-for="item in navItems" :key="item" class="nav-item">
-            <a class="nav-link" href="#">{{ item }}</a>
+            <a class="nav-link" href="#" @click="mobileNavOpen = false">{{ item }}</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="#">Terminal Audit</a>
+            <a class="nav-link" href="#" @click="mobileNavOpen = false">Terminal Audit</a>
           </li>
         </ul>
         <ul class="nav-user list-unstyled">
@@ -237,33 +248,35 @@ onMounted(refreshAll);
           <h3 class="pull-left">Command Records ({{ commandCount }})</h3>
         </div>
 
-        <table class="grid fixed bordered">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>User</th>
-              <th>Asset</th>
-              <th>Account</th>
-              <th>Session</th>
-              <th>Command</th>
-              <th>Risk</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in commandRows" :key="`${row.timestampDisplay}-${row.session}-${row.input}`">
-              <td>{{ row.timestampDisplay }}</td>
-              <td>{{ row.user }}</td>
-              <td>{{ row.asset }}</td>
-              <td>{{ row.account }}</td>
-              <td><code>{{ row.session }}</code></td>
-              <td><code>{{ row.input }}</code></td>
-              <td>{{ row.riskLevel }}</td>
-            </tr>
-            <tr v-if="commandRows.length === 0">
-              <td colspan="7" class="text-center text-muted pt-20 pb-20">No command records found.</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="grid fixed bordered">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Asset</th>
+                <th>Account</th>
+                <th>Session</th>
+                <th>Command</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in commandRows" :key="`${row.timestampDisplay}-${row.session}-${row.input}`">
+                <td>{{ row.timestampDisplay }}</td>
+                <td>{{ row.user }}</td>
+                <td>{{ row.asset }}</td>
+                <td>{{ row.account }}</td>
+                <td><code>{{ row.session }}</code></td>
+                <td><code>{{ row.input }}</code></td>
+                <td>{{ row.riskLevel }}</td>
+              </tr>
+              <tr v-if="commandRows.length === 0">
+                <td colspan="7" class="text-center text-muted pt-20 pb-20">No command records found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>

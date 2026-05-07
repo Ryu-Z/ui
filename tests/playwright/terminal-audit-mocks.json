@@ -1,0 +1,77 @@
+{
+  "routes": [
+    {
+      "name": "terminal-audit status",
+      "method": "GET",
+      "pattern": "**/v3/terminal-audit/status",
+      "response": "status"
+    },
+    {
+      "name": "terminal-audit command list",
+      "method": "GET",
+      "pattern": "**/v3/terminal-audit/commands**",
+      "response": "commandsDefault"
+    },
+    {
+      "name": "terminal-audit filtered command list",
+      "method": "GET",
+      "pattern": "**/v3/terminal-audit/commands?sessionId=**",
+      "response": "commandsFiltered"
+    },
+    {
+      "name": "terminal-audit replay signed url",
+      "method": "GET",
+      "pattern": "**/v3/terminal-audit/replays/**/url**",
+      "response": "replayUrl"
+    }
+  ],
+  "responses": {
+    "status": {
+      "enabled": true,
+      "commandStorageType": "s3",
+      "replayStorageType": "s3"
+    },
+    "commandsDefault": {
+      "count": 2,
+      "data": [
+        {
+          "timestamp": 1778112000,
+          "user": "alice",
+          "asset": "prod-eks-node-a",
+          "account": "root",
+          "session": "sess-a",
+          "input": "kubectl get pods -A",
+          "riskLevel": 1
+        },
+        {
+          "timestamp": 1778112060,
+          "user": "bob",
+          "asset": "prod-docker-host-b",
+          "account": "ubuntu",
+          "session": "sess-b",
+          "input": "ctr -n k8s.io images pull public.ecr.aws/nginx/nginx:latest",
+          "riskLevel": 2
+        }
+      ]
+    },
+    "commandsFiltered": {
+      "count": 1,
+      "data": [
+        {
+          "timestamp": 1778112120,
+          "user": "alice@example.com",
+          "asset": "prod-eks-node-a",
+          "account": "root",
+          "session": "sess/one",
+          "input": "kubectl get pods",
+          "riskLevel": 2
+        }
+      ]
+    },
+    "replayUrl": {
+      "url": "https://replay.example/session-one.cast.gz?X-Amz-Signature=mocked",
+      "key": "terminal-audit/2026-05-07/session-one.cast.gz"
+    },
+    "html404": "<!DOCTYPE HTML><html><body><h1>Error response</h1><p>File not found.</p></body></html>"
+  }
+}
