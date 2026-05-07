@@ -125,7 +125,6 @@ const loadingReplay = ref(false);
 const errorMessage = ref('');
 const copied = ref(false);
 const mobileNavOpen = ref(false);
-const navOverviewOpen = ref(false);
 const openNavMenu = ref('');
 const userMenuOpen = ref(false);
 
@@ -143,12 +142,6 @@ const commandRows = computed(() => commands.value.map((row) => {
     timestampDisplay,
   };
 }));
-const overviewSections = computed(() => navItems.map((item) => ({
-  ...item,
-  links: (item.menu || item.columns?.flatMap((column) => column.links) || [{ label: item.label, href: item.href }])
-    .filter((link) => !link.divider),
-})));
-
 function hasNavMenu(item) {
   return Boolean(item.menu || item.columns);
 }
@@ -160,27 +153,23 @@ function closeMenus() {
 
 function toggleNavigation() {
   mobileNavOpen.value = !mobileNavOpen.value;
-  navOverviewOpen.value = mobileNavOpen.value;
   closeMenus();
 }
 
 function toggleNavMenu(item) {
   if (!hasNavMenu(item)) {
     closeMenus();
-    navOverviewOpen.value = false;
     mobileNavOpen.value = false;
     return;
   }
 
   userMenuOpen.value = false;
-  navOverviewOpen.value = false;
   openNavMenu.value = openNavMenu.value === item.id ? '' : item.id;
 }
 
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value;
   openNavMenu.value = '';
-  navOverviewOpen.value = false;
 }
 
 async function refreshStatus() {
@@ -387,21 +376,6 @@ onMounted(refreshAll);
             </ul>
           </li>
         </ul>
-        <div v-if="navOverviewOpen" class="nav-overview" role="menu">
-          <section v-for="section in overviewSections" :key="section.id" class="nav-overview-section">
-            <div class="nav-dropdown-title">{{ section.label }}</div>
-            <a
-              v-for="link in section.links"
-              :key="`${section.id}-${link.href || link.label}`"
-              class="nav-dropdown-link"
-              :href="link.href"
-              role="menuitem"
-              @click="closeMenus"
-            >
-              {{ link.label }}
-            </a>
-          </section>
-        </div>
       </nav>
     </header>
 

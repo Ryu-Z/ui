@@ -376,30 +376,6 @@ code {
   margin-right: 0;
 }
 
-.nav-overview {
-  background: #fff;
-  border-top: 1px solid rgba(236, 240, 241, 0.16);
-  box-shadow: inset 0 1px 0 rgba(236, 240, 241, 0.08);
-  display: grid;
-  flex: 0 0 100%;
-  gap: 0;
-  grid-template-columns: repeat(6, minmax(130px, 1fr));
-  order: 5;
-  padding: 10px;
-  width: 100%;
-  z-index: 10;
-}
-
-.nav-overview-section {
-  margin: 0;
-  min-width: 0;
-}
-
-.nav-overview .nav-dropdown-link {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .gh-avatar {
   display: inline-block;
   height: 30px;
@@ -626,14 +602,6 @@ footer a {
   padding-right: 10px;
 }
 
-@media (min-width: 768px) and (max-width: 1199px) {
-  .page-header .nav-toggle {
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
-  }
-}
-
 @media (max-width: 767px) {
   #application-shell {
     min-width: 0;
@@ -735,29 +703,6 @@ footer a {
   .nav-dropdown-empty {
     color: rgba(236, 240, 241, 0.7);
     padding-left: 24px;
-  }
-
-  .nav-overview {
-    grid-template-columns: 1fr;
-    max-height: 360px;
-    overflow-y: auto;
-    padding: 6px 0;
-  }
-
-  .nav-overview .nav-dropdown-title {
-    color: var(--text-muted);
-    padding-left: 10px;
-  }
-
-  .nav-overview .nav-dropdown-link {
-    color: var(--text);
-    padding-left: 10px;
-  }
-
-  .nav-overview .nav-dropdown-link:hover,
-  .nav-overview .nav-dropdown-link:focus {
-    background: var(--light-grey);
-    color: var(--primary);
   }
 
   .user-menu {

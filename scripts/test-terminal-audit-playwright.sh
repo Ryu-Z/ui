@@ -455,7 +455,9 @@ main() {
   assert_eval "document.documentElement.scrollWidth <= window.innerWidth + 1" "窄屏页面没有横向溢出"
   assert_eval "getComputedStyle(document.querySelector('.nav-toggle')).display !== 'none' && getComputedStyle(document.querySelector('.nav-main')).display === 'none' && document.querySelector('.page-header nav').getBoundingClientRect().height <= 60" "窄屏导航默认折叠为紧凑顶栏"
   run_logged "展开窄屏导航" click '.nav-toggle'
-  assert_eval "getComputedStyle(document.querySelector('.nav-main')).display !== 'none' && document.querySelector('.nav-overview')?.innerText.includes('Global DNS Entries') && document.querySelector('.page-header nav').getBoundingClientRect().height < 760" "窄屏导航点击后展开全量菜单且高度受控"
+  assert_eval "getComputedStyle(document.querySelector('.nav-main')).display !== 'none' && !document.querySelector('.nav-overview') && document.querySelector('.page-header nav').getBoundingClientRect().height < 340" "窄屏导航点击后展开旧版深色导航列表且高度受控"
+  run_logged "展开窄屏 Tools 菜单" click 'button.nav-menu-button:has-text("Tools")'
+  assert_eval "document.querySelector('.nav-main')?.innerText.includes('Global DNS Entries') && document.querySelector('.nav-main')?.innerText.includes('Continuous Delivery')" "窄屏二级菜单在导航列表内展开"
   capture_step "02-mobile-nav" "窄屏导航" "验证 534px 视口下导航默认折叠，展开后菜单高度受控且页面没有横向溢出。"
   run_logged "收起窄屏导航" click '.nav-toggle'
   run_logged "恢复桌面视口" resize 1440 1100
