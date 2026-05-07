@@ -143,6 +143,20 @@ await waitUntil(() => requests.commands.length >= 1, 'commands endpoint should b
 assert(await page.locator('text=Enabled').count() > 0, 'status label should render');
 assert(await page.locator('text=s3').count() >= 2, 'status storage values should render');
 assert(await page.locator('text=kubectl get pods -A').count() === 1, 'initial command data should render');
+const layout = await page.evaluate(() => {
+  const nav = document.querySelector('.page-header nav').getBoundingClientRect();
+  const main = document.querySelector('main').getBoundingClientRect();
+  const navStyle = getComputedStyle(document.querySelector('.page-header nav'));
+
+  return {
+    navLeft: nav.left,
+    mainLeft: main.left,
+    navBackground: navStyle.backgroundColor,
+  };
+});
+
+assert(Math.abs(layout.navLeft - layout.mainLeft) < 1, 'main content should align with the navigation bar');
+assert(layout.navBackground !== 'rgba(0, 0, 0, 0)', 'navigation bar should have a visible full-width background');
 assert(requests.commands[0].pathname === '/v3/terminal-audit/commands', 'initial commands endpoint path should match');
 assert(requests.commands[0].searchParams.get('limit') === '100', 'initial commands query should include limit');
 

@@ -185,6 +185,8 @@ code {
 
 .page-header nav {
   align-items: center;
+  background-color: var(--secondary);
+  border-radius: 3px;
   box-sizing: border-box;
   display: flex;
   flex: 0 1 auto;
@@ -195,7 +197,7 @@ code {
 }
 
 .nav-logo {
-  background-position: left center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: auto 32px;
   height: 48px;
@@ -205,7 +207,7 @@ code {
 }
 
 .logo-oss {
-  background-image: url("/assets/images/logos/main.svg");
+  background-image: url("/assets/images/logos/rancher-logo-cow-white.svg");
   width: 80px;
 }
 
@@ -218,17 +220,14 @@ code {
 
 .nav-main,
 .nav-user {
-  background-color: var(--secondary);
   height: 50px;
 }
 
 .nav-main {
-  border-radius: 3px 0 0 3px;
   flex-grow: 1;
 }
 
 .nav-user {
-  border-radius: 0 3px 3px 0;
   position: relative;
   z-index: 4;
 }
